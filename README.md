@@ -1,2 +1,3 @@
 # web23
-Course of web 3
+
+Monorepo of multiple Web3 projects
