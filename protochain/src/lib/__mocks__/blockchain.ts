@@ -1,10 +1,3 @@
-/**
- * File name: blockchain.ts
- * Description: File responsible for implementing the blockchain class.
- * Author: brldevx
- * Creation date: 11/04/2024
- */
-
 import Block from "./block";
 import Validation from "../validation";
 

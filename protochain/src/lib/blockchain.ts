@@ -2,11 +2,12 @@
  * File name: blockchain.ts
  * Description: File responsible for implementing the blockchain class.
  * Author: brldevx
- * Creation date: 11/04/2024
+ * Creation date: 04/11/2024
  */
 
 import Block from "./block";
 import Validation from "./validation";
+import BlockInfo from "./block-info";
 
 /**
  * Blockchain Class
@@ -15,6 +16,7 @@ class BlockChain {
   blocks: Block[];
   nextIndex: number = 0;
   static readonly DIFFICULTY_FACTOR: number = 5;
+  static readonly MAX_DIFFICULTY: number = 62;
 
   /**
    * Creates a new blockchain with a genesis block
@@ -94,6 +96,35 @@ class BlockChain {
         );
     }
     return new Validation();
+  }
+
+  /**
+   *
+   * @returns Returns the fee per transaction
+   */
+  getFeePerTx(): number {
+    return 1;
+  }
+
+  /**
+   * @returns Returns the next block
+   */
+  getNextBlock(): BlockInfo {
+    const data = new Date().toString();
+    const difficulty = this.getDifficulty();
+    const previusHash = this.getLastBlock().hash;
+    const index = this.blocks.length;
+    const feePerTx = this.getFeePerTx();
+    const maxDifficulty = BlockChain.MAX_DIFFICULTY;
+
+    return {
+      data,
+      difficulty,
+      feePerTx,
+      index,
+      maxDifficulty,
+      previousHash: previusHash,
+    } as BlockInfo;
   }
 }
 

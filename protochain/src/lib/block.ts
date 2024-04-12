@@ -2,7 +2,7 @@
  * File name: block.ts
  * Description: File responsible for implementing the block class.
  * Author: brldevx
- * Creation date: 11/04/2024
+ * Creation date: 04/11/2024
  */
 
 import sha256 from "crypto-js/sha256";
