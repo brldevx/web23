@@ -14,6 +14,7 @@ import Validation from "./validation";
 class BlockChain {
   blocks: Block[];
   nextIndex: number = 0;
+  static readonly DIFFICULTY_FACTOR: number = 5;
 
   /**
    * Creates a new blockchain with a genesis block
@@ -37,13 +38,25 @@ class BlockChain {
   }
 
   /**
+   *
+   * @returns Returns the difficulty of the blockchain
+   */
+  getDifficulty(): number {
+    return Math.ceil(this.blocks.length / BlockChain.DIFFICULTY_FACTOR);
+  }
+
+  /**
    * @param block
    * @returns Return true if the block is valid
    */
   addBlock(block: Block): Validation {
     const lastBlock = this.getLastBlock();
 
-    const validation = block.isValid(lastBlock.hash, lastBlock.index);
+    const validation = block.isValid(
+      lastBlock.hash,
+      lastBlock.index,
+      this.getDifficulty()
+    );
 
     if (!validation.success)
       return new Validation(false, `Invalid block: ${validation.message}`);
@@ -71,7 +84,8 @@ class BlockChain {
       const previousBlock = this.blocks[i - 1];
       const validation = currentBlock.isValid(
         previousBlock.hash,
-        previousBlock.index
+        previousBlock.index,
+        this.getDifficulty()
       );
       if (!validation.success)
         return new Validation(
