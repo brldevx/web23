@@ -8,10 +8,12 @@
     "dev": "yarn nodemon --watch ./src/ --exec 'yarn ts-node ./src/blockchain.ts' -e ts",
     "start": "node ./dist/blockchain.js",
     "test": "jest",
-    "blockchain": "ts-node ./src/server/blockchain-server.ts --run"
+    "blockchain": "ts-node ./src/server/blockchain-server.ts --run",
+    "miner": "ts-node ./src/client/miner-client.ts"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@types/axios": "^0.14.0",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
@@ -25,7 +27,9 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "morgan": "^1.10.0"
   }
