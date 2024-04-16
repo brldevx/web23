@@ -10,6 +10,7 @@ import Validation from "./validation";
 import BlockInfo from "./block-info";
 import Transaction from "./transaction";
 import TransactionType from "./transactionType";
+import TransactionSearch from "./transaction-search";
 
 /**
  * Blockchain Class
@@ -124,6 +125,31 @@ class BlockChain {
    */
   getBlock(hash: string): Block | undefined {
     return this.blocks.find((b) => b.hash === hash);
+  }
+
+  getTransaction(hash: string): TransactionSearch {
+    const mempoolIndex = this.mempool.findIndex((tx) => tx.hash === hash);
+    if (mempoolIndex !== -1) {
+      return {
+        mempoolIndex,
+        transaction: this.mempool[mempoolIndex],
+      } as TransactionSearch;
+    }
+    const blockIndex = this.blocks.findIndex((b) =>
+      b.transactions.some((tx) => tx.hash === hash)
+    );
+    if (blockIndex !== -1) {
+      return {
+        blockIndex,
+        transaction: this.blocks[blockIndex].transactions.find(
+          (tx) => tx.hash === hash
+        ),
+      } as TransactionSearch;
+    }
+    return {
+      blockIndex: -1,
+      mempoolIndex: -1,
+    } as TransactionSearch;
   }
 
   /**
