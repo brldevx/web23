@@ -4,6 +4,7 @@ import BlockInfo from "../block-info";
 import Transaction from "./transaction";
 import TransactionType from "../transactionType";
 import TransactionSearch from "../transaction-search";
+import TransactionInput from "./transactionInput";
 
 /**
  * Blockchain mock Class
@@ -25,7 +26,7 @@ class BlockChain {
         previousHash: "",
         transactions: [
           new Transaction({
-            data: "tx1",
+            txInput: new TransactionInput(),
             type: TransactionType.FEE,
           } as Transaction),
         ],
@@ -102,7 +103,7 @@ class BlockChain {
     return {
       transactions: [
         new Transaction({
-          data: "block 2",
+          txInput: new TransactionInput(),
         } as Transaction),
       ],
       difficulty: 0,
