@@ -65,6 +65,18 @@ class BlockChain {
    * @returns Return true if the transaction is valid
    */
   addTransaction(transaction: Transaction): Validation {
+    if (transaction.txInput) {
+      const from = transaction.txInput.fromAdress;
+      const pendingTx = this.mempool
+        .map((tx) => tx.txInput)
+        .filter((txi) => txi?.fromAdress === from);
+      if (pendingTx && pendingTx.length) {
+        return new Validation(false, "This wallet has a pending transaction.");
+      }
+
+      //TODO: validar a origem dos fundos
+    }
+
     const validation = transaction.isValid();
     if (!validation.success) {
       return new Validation(false, `Invalid tx: ${validation.message}`);
