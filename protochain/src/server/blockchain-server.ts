@@ -12,6 +12,8 @@ import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import Block from "../lib/block";
 import BlockChain from "../lib/blockchain";
+import block from "../lib/block";
+import Transaction from "../lib/transaction";
 
 /* c8 ignore start */
 const PORT: number = parseInt(`${process.env.BLOCKCHAIN_PORT || 3000}`);
@@ -67,6 +69,33 @@ app.post("/blocks", (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.status(201).json(block);
+});
+
+app.get(
+  "/transactions/:hash?",
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.params.hash) {
+      return res.json(blockchain.getTransaction(req.params.hash));
+    }
+
+    return res.json({
+      next: blockchain.mempool.slice(0, BlockChain.TX_PER_BLOCK),
+      total: blockchain.mempool.length,
+    });
+  }
+);
+
+app.post("/transactions", (req: Request, res: Response, next: NextFunction) => {
+  if (req.body.hash === undefined) return res.sendStatus(422);
+
+  const tx = new Transaction(req.body as Transaction);
+  const validation = blockchain.addTransaction(tx);
+
+  if (!validation.success) {
+    return res.status(400).json(validation);
+  }
+
+  return res.status(201).json(tx);
 });
 
 /* c8 ignore start */
