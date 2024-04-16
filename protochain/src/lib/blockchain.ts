@@ -16,14 +16,18 @@ import TransactionType from "./transactionType";
  */
 class BlockChain {
   blocks: Block[];
+  mempool: Transaction[];
   nextIndex: number = 0;
+
   static readonly DIFFICULTY_FACTOR: number = 5;
+  static readonly TX_PER_BLOCK: number = 2;
   static readonly MAX_DIFFICULTY: number = 62;
 
   /**
    * Creates a new blockchain with a genesis block
    */
   constructor() {
+    this.mempool = [];
     this.blocks = [
       new Block({
         index: this.nextIndex,
@@ -55,6 +59,32 @@ class BlockChain {
   }
 
   /**
+   * @param transaction
+   * @returns Return true if the transaction is valid
+   */
+  addTransaction(transaction: Transaction): Validation {
+    const validation = transaction.isValid();
+    if (!validation.success) {
+      return new Validation(false, `Invalid tx: ${validation.message}`);
+    }
+
+    if (
+      this.blocks.some((b) =>
+        b.transactions.some((tx) => tx.hash === transaction.hash)
+      )
+    ) {
+      return new Validation(false, "Duplicated tx in blockchain.");
+    }
+
+    if (this.mempool.some((tx) => tx.hash === transaction.hash)) {
+      return new Validation(false, "Duplicated tx in mempool.");
+    }
+
+    this.mempool.push(transaction);
+    return new Validation(true, transaction.hash);
+  }
+
+  /**
    * @param block
    * @returns Return true if the block is valid
    */
@@ -69,9 +99,22 @@ class BlockChain {
 
     if (!validation.success)
       return new Validation(false, `Invalid block: ${validation.message}`);
+
+    const txs = block.transactions
+      .filter((tx) => tx.type !== TransactionType.FEE)
+      .map((tx) => tx.hash);
+
+    const newMempool = this.mempool.filter((tx) => !txs.includes(tx.hash));
+
+    if (newMempool.length + txs.length !== this.mempool.length) {
+      return new Validation(false, "Invalid tx in block: mempool");
+    }
+
+    this.mempool = newMempool;
+
     this.blocks.push(block);
     this.nextIndex++;
-    return new Validation();
+    return new Validation(true, block.hash);
   }
 
   /**
@@ -106,9 +149,9 @@ class BlockChain {
   }
 
   /**
-   *
    * @returns Returns the fee per transaction
    */
+  //TODO: Implement the getFeePerTx method
   getFeePerTx(): number {
     return 1;
   }
@@ -116,12 +159,13 @@ class BlockChain {
   /**
    * @returns Returns the next block
    */
-  getNextBlock(): BlockInfo {
-    const transactions = [
-      new Transaction({
-        data: new Date().toString(),
-      } as Transaction),
-    ];
+  getNextBlock(): BlockInfo | null {
+    if (!this.mempool || !this.mempool.length) {
+      return null;
+    }
+
+    const transactions = this.mempool.slice(0, BlockChain.TX_PER_BLOCK);
+
     const difficulty = this.getDifficulty();
     const previousHash = this.getLastBlock().hash;
     const index = this.blocks.length;
