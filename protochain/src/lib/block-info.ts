@@ -5,6 +5,8 @@
  * Creation date: 04/12/2024
  */
 
+import Transaction from "./transaction";
+
 /**
  * Interface responsible for defining the structure of the BlockInfo object.
  */
@@ -14,5 +16,5 @@ export default interface BlockInfo {
   difficulty: number;
   maxDifficulty: number;
   feePerTx: number;
-  data: string;
+  transactions: Transaction[];
 }
