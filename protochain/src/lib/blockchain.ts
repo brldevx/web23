@@ -11,6 +11,7 @@ import BlockInfo from "./block-info";
 import Transaction from "./transaction";
 import TransactionType from "./transactionType";
 import TransactionSearch from "./transaction-search";
+import TransactionInput from "./transactionInput";
 
 /**
  * Blockchain Class
@@ -36,7 +37,7 @@ class BlockChain {
         transactions: [
           new Transaction({
             type: TransactionType.FEE,
-            data: new Date().toString(),
+            txInput: new TransactionInput(),
           } as Transaction),
         ],
       } as Block),
