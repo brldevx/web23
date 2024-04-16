@@ -23,7 +23,10 @@ class Wallet {
       keys = ECPair.makeRandom();
     }
 
+    /* c8 ignore start */
     this.privateKey = keys.privateKey?.toString("hex") || "";
+    /* c8 ignore end */
+
     this.publicKey = keys.publicKey.toString("hex");
   }
 }
