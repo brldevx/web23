@@ -26,6 +26,12 @@ let totalMined = 0;
 async function mineBlock() {
   console.log("Getting next block info...");
   const { data } = await axios.get(`${BLOCKCHAIN_SERVER_URL}blocks/next`);
+  if (!data) {
+    console.log("No TX found. Waiting...");
+    return setTimeout(() => {
+      mineBlock();
+    }, 5000);
+  }
   const blockInfo = data as BlockInfo;
 
   const newBlock = Block.fromBlockInfo(blockInfo);
@@ -38,7 +44,7 @@ async function mineBlock() {
   console.log("Block mined! Sending to blockchain...");
 
   try {
-    await axios.post(`${BLOCKCHAIN_SERVER_URL}/blocks/`, newBlock);
+    await axios.post(`${BLOCKCHAIN_SERVER_URL}blocks/`, newBlock);
     console.log("Block sent and accepted by the blockchain!");
     totalMined++;
     console.log("Total mined blocks: " + totalMined);
