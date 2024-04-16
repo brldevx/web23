@@ -57,7 +57,7 @@ class BlockChain {
    * @returns Returns the difficulty of the blockchain
    */
   getDifficulty(): number {
-    return Math.ceil(this.blocks.length / BlockChain.DIFFICULTY_FACTOR);
+    return Math.ceil(this.blocks.length / BlockChain.DIFFICULTY_FACTOR) + 1;
   }
 
   /**
@@ -69,7 +69,7 @@ class BlockChain {
       const from = transaction.txInput.fromAdress;
       const pendingTx = this.mempool
         .map((tx) => tx.txInput)
-        .filter((txi) => txi?.fromAdress === from);
+        .filter((txi) => txi!.fromAdress === from);
       if (pendingTx && pendingTx.length) {
         return new Validation(false, "This wallet has a pending transaction.");
       }
@@ -88,10 +88,6 @@ class BlockChain {
       )
     ) {
       return new Validation(false, "Duplicated tx in blockchain.");
-    }
-
-    if (this.mempool.some((tx) => tx.hash === transaction.hash)) {
-      return new Validation(false, "Duplicated tx in mempool.");
     }
 
     this.mempool.push(transaction);
