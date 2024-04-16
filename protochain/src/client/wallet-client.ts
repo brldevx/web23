@@ -33,6 +33,7 @@ function nmenu() {
     console.log("2 - Recover Wallet");
     console.log("3 - Balance");
     console.log("4 - Send Transaction");
+    console.log("5 - Search TX");
 
     rl.question("Choose your option: ", (answer) => {
       switch (answer) {
@@ -47,6 +48,9 @@ function nmenu() {
           break;
         case "4":
           sendTransaction();
+          break;
+        case "5":
+          searchTx();
           break;
         default: {
           console.log("Invalid option");
@@ -147,6 +151,21 @@ function sendTransaction() {
     });
   });
   preMenu();
+}
+
+function searchTx() {
+  console.clear();
+  rl.question(`Enter the TX hash: `, async (hash) => {
+    try {
+      const txResponse = await axios.get(
+        `${BLOCKCHAIN_SERVER}transactions/${hash}`
+      );
+      console.log(txResponse.data);
+    } catch (error: any) {
+      console.error(error.response ? error.response : error.message);
+    }
+    preMenu();
+  });
 }
 
 nmenu();
