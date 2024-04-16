@@ -106,7 +106,7 @@ class BlockChain {
           txInput: new TransactionInput(),
         } as Transaction),
       ],
-      difficulty: 0,
+      difficulty: 1,
       feePerTx: this.getFeePerTx(),
       index: 1,
       maxDifficulty: 62,
