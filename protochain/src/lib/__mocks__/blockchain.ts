@@ -3,18 +3,21 @@ import Validation from "../validation";
 import BlockInfo from "../block-info";
 import Transaction from "./transaction";
 import TransactionType from "../transactionType";
+import TransactionSearch from "../transaction-search";
 
 /**
  * Blockchain mock Class
  */
 class BlockChain {
   blocks: Block[];
+  mempool: Transaction[];
   nextIndex: number = 0;
 
   /**
    * Creates a new mocked blockchain with a genesis block
    */
   constructor() {
+    this.mempool = [];
     this.blocks = [
       new Block({
         index: 0,
@@ -49,6 +52,22 @@ class BlockChain {
     this.blocks.push(block);
     this.nextIndex++;
     return new Validation();
+  }
+
+  addTransaction(transaction: Transaction): Validation {
+    const validation = transaction.isValid();
+    if (validation.success) {
+      return validation;
+    }
+    this.mempool.push(transaction);
+    return new Validation();
+  }
+
+  getTransaction(hash: string): TransactionSearch {
+    return {
+      mempoolIndex: 0,
+      transaction: { hash },
+    } as TransactionSearch;
   }
 
   /**

@@ -31,7 +31,8 @@ app.use(express.json());
 
 app.get("/status", (req, res, next) => {
   res.json({
-    numberOfBlocks: blockchain.blocks.length,
+    mempool: blockchain.mempool.length,
+    blocks: blockchain.blocks.length,
     isValid: blockchain.isValid(),
     lastBlock: blockchain.getLastBlock(),
   });
