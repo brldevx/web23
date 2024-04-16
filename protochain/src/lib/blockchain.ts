@@ -8,6 +8,8 @@
 import Block from "./block";
 import Validation from "./validation";
 import BlockInfo from "./block-info";
+import Transaction from "./transaction";
+import TransactionType from "./transactionType";
 
 /**
  * Blockchain Class
@@ -26,7 +28,12 @@ class BlockChain {
       new Block({
         index: this.nextIndex,
         previousHash: "",
-        data: "Genesis Block",
+        transactions: [
+          new Transaction({
+            type: TransactionType.FEE,
+            data: new Date().toString(),
+          } as Transaction),
+        ],
       } as Block),
     ];
     this.nextIndex++;
@@ -110,20 +117,24 @@ class BlockChain {
    * @returns Returns the next block
    */
   getNextBlock(): BlockInfo {
-    const data = new Date().toString();
+    const transactions = [
+      new Transaction({
+        data: new Date().toString(),
+      } as Transaction),
+    ];
     const difficulty = this.getDifficulty();
-    const previusHash = this.getLastBlock().hash;
+    const previousHash = this.getLastBlock().hash;
     const index = this.blocks.length;
     const feePerTx = this.getFeePerTx();
     const maxDifficulty = BlockChain.MAX_DIFFICULTY;
 
     return {
-      data,
+      transactions,
       difficulty,
       feePerTx,
       index,
       maxDifficulty,
-      previousHash: previusHash,
+      previousHash,
     } as BlockInfo;
   }
 }

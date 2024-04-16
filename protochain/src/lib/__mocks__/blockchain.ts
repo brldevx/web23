@@ -1,6 +1,8 @@
 import Block from "./block";
 import Validation from "../validation";
 import BlockInfo from "../block-info";
+import Transaction from "./transaction";
+import TransactionType from "../transactionType";
 
 /**
  * Blockchain mock Class
@@ -18,7 +20,12 @@ class BlockChain {
         index: 0,
         hash: "abc",
         previousHash: "",
-        data: "Genesis Block",
+        transactions: [
+          new Transaction({
+            data: "tx1",
+            type: TransactionType.FEE,
+          } as Transaction),
+        ],
         timestamp: Date.now(),
       } as Block),
     ];
@@ -74,7 +81,11 @@ class BlockChain {
    */
   getNextBlock(): BlockInfo {
     return {
-      data: new Date().toString(),
+      transactions: [
+        new Transaction({
+          data: "block 2",
+        } as Transaction),
+      ],
       difficulty: 0,
       feePerTx: this.getFeePerTx(),
       index: 1,
